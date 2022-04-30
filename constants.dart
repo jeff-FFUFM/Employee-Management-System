@@ -61,3 +61,4 @@ Admin mainAdmin = Admin();
 Accounts account = Accounts();
 Leaves leave = Leaves();
 Employee employee = Employee();
+AdminAccounts adminAccount = AdminAccounts();

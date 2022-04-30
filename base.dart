@@ -38,9 +38,73 @@ class AdminAccounts extends Admin {
       print('Invalid username/password');
     }
   }
-}
 
-class Work extends Admin {}
+  void registerAdmin(Admin admin) {
+    AdminAccounts adminAccount = AdminAccounts();
+    accountName = admin.name;
+    print('Input your username(6-16 characters): ');
+    adminAccount._username = stdin.readLineSync()!;
+
+    while (adminAccount._username.split('').length > 16 || adminAccount._username.split('').length < 6) {
+      print('Username invalid.\nInput your username(6-16 characters): ');
+      adminAccount._username = stdin.readLineSync()!;
+    }
+
+    bool isNotUnique = adminAccounts.containsKey(adminAccount._username);
+
+    while (isNotUnique) {
+      print('Username is already used. Please choose another username: ');
+      adminAccount._username = stdin.readLineSync()!;
+      isNotUnique = adminAccounts.containsKey(adminAccount._username);
+    }
+    print('Username accepted!');
+
+    print('Input your password(8-24 characters): ');
+    adminAccount._password = stdin.readLineSync()!;
+
+    while (adminAccount._password.split('').length > 24 || adminAccount._password.split('').length < 8) {
+      print('Password invalid.\nInput your password(8-16 characters): ');
+      adminAccount._password = stdin.readLineSync()!;
+    }
+    //print(adminAccount._password);   For testing
+    print('Password accepted');
+    adminAccounts[adminAccount._username] = adminAccount._password;
+    //print(adminAccounts); For testing
+    print('Employee account created!');
+
+    var hmacSha256 = Hmac(sha256, utf8.encode(adminAccount._username));
+    var digest = hmacSha256.convert(utf8.encode(adminAccount._password));
+
+    adminAccount._password = digest.toString();
+    //print(adminAccount._password); For testing
+    adminAccounts[adminAccount._username] = adminAccount._password;
+    //print(adminAccounts); For testing
+  }
+
+  //DONE
+  bool loginVerificationAdmin(Admin admin) {
+    print('Input your username: ');
+    _username = stdin.readLineSync() ?? 'noUser';
+    print('Input your password: ');
+    _password = stdin.readLineSync()!;
+
+    var hmacSha256 = Hmac(sha256, utf8.encode(_username));
+    var digest = hmacSha256.convert(utf8.encode(_password));
+    _password = digest.toString();
+
+    if (adminAccounts.containsKey(_username)) {
+      if (adminAccounts[_username] == _password) {
+        isLoggedIn = true;
+        print('Login successful!');
+        return true;
+      }
+      return false;
+    } else {
+      print('Invalid username/password');
+      return false;
+    }
+  }
+}
 
 class Accounts extends Employee {
   String? accountName;
@@ -103,30 +167,6 @@ class Accounts extends Employee {
 
     if (accounts.containsKey(_username)) {
       if (accounts[_username] == _password) {
-        isLoggedIn = true;
-        print('Login successful!');
-        return true;
-      }
-      return false;
-    } else {
-      print('Invalid username/password');
-      return false;
-    }
-  }
-
-  //DONE
-  bool loginVerificationAdmin(Admin admin) {
-    print('Input your username: ');
-    _username = stdin.readLineSync() ?? 'noUser';
-    print('Input your password: ');
-    _password = stdin.readLineSync()!;
-
-    var hmacSha256 = Hmac(sha256, utf8.encode(_username));
-    var digest = hmacSha256.convert(utf8.encode(_password));
-    _password = digest.toString();
-
-    if (adminAccounts.containsKey(_username)) {
-      if (adminAccounts[_username] == _password) {
         isLoggedIn = true;
         print('Login successful!');
         return true;
@@ -629,7 +669,7 @@ But FIRST,\n''');
       int i = 2;
 
       while (i != 0) {
-        bool accountMatched = account.loginVerificationAdmin(mainAdmin);
+        bool accountMatched = adminAccount.loginVerificationAdmin(mainAdmin);
         if (!accountMatched) {
           print('Tries remaining: $i');
           i -= 1;
@@ -659,7 +699,7 @@ But FIRST,\n''');
 
 void adminFunctionsPrompt() {
   String? adminAction;
-  final adminOptions = ['Q', 'O', 'U', 'V', 'D', 'DE', 'DA'];
+  final adminOptions = ['Q', 'O', 'U', 'V', 'D', 'DE', 'DA', 'AAA', 'AE'];
 
   print('''Welcome dear admin,
 To quit, press "Q"
@@ -669,6 +709,8 @@ Do you want to view employee leaves? Press "V"
 Do you want to delete an employee's DATA? Press "D"
 Do you want to display list of employees? Press "DE"
 Do you want to display list of admins? Press "DA"
+Do you want to add an admin account? Press "AAA"
+Do you want to add an employee account? Press "AE"
 ''');
 
   adminAction = stdin.readLineSync()!.toUpperCase();
@@ -681,6 +723,8 @@ Do you want to view employee leaves? Press "V"
 Do you want to delete an employee's DATA? Press "D"
 Do you want to display list of employees? Press "DE"
 Do you want to display list of admins? Press "DA"
+Do you want to add an admin account? Press "AAA"
+Do you want to add an employee account? Press "AE"
 ''');
     adminAction = stdin.readLineSync()!.toUpperCase();
   }
@@ -696,6 +740,12 @@ Do you want to display list of admins? Press "DA"
       mainAdmin.showEmployeeData();
     } else if (adminAction == 'DA') {
       mainAdmin.showAdminData();
+    } else if (adminAction == 'AAA') {
+      mainAdmin.addAdmin();
+      adminAccount.registerAdmin(mainAdmin);
+    } else if (adminAction == 'AE') {
+      createAccount();
+      print('You have successfully created employee ${employees.last.name}');
     } else if (adminAction == 'O') {
       logOut();
     } else if (adminAction == 'Q') {
@@ -757,8 +807,6 @@ void createAccount() {
   account.register(employees[0]);
   hasAccountBool = true;
 }
-
-void adminFunctions() {}
 
 void reset() {
   endApp = false;
@@ -825,5 +873,3 @@ Map<String, String> accounts = {
   'user': '16aa95479af46da4def2d52a345960d2cd276398763e430571ea4aba3ac70f12'
   //user => user
 };
-
-void main() {}
