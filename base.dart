@@ -290,7 +290,8 @@ class Employee extends Leaves {
   String askAddress() {
     print('Enter address: ');
     String address = stdin.readLineSync()!;
-    while (isNumber(address)) {
+
+    while (isNumber(address) || address.split(' ').toList().length < 5) {
       print('Enter a valid address: ');
       address = stdin.readLineSync()!;
     }
@@ -423,11 +424,11 @@ class Admin extends Employee {
       var employee = Employee();
       employee.id = employees.length + 1;
       employee.name = employee.askName();
-      // employee.address = employee.askAddress();
-      // employee.contactNumber = employee.askNumber();
-      // employee.dateRegistered = employee.askRegistrationDate();
-      // employee.salary = employee.askSalary();
-      // employee.birthday = employee.askBirthday();
+      employee.address = employee.askAddress();
+      employee.contactNumber = employee.askNumber();
+      employee.dateRegistered = employee.askRegistrationDate();
+      employee.salary = employee.askSalary();
+      employee.birthday = employee.askBirthday();
       employees.add(employee);
       print('${employee.name} is successfully added!');
     }
@@ -567,7 +568,8 @@ bool isNumber(String? s) {
 }
 
 void welcomeText() {
-  print('''WELCOME TO THE EMPLOYEE MANAGEMENT SYSTEM
+  print('''
+WELCOME TO THE EMPLOYEE MANAGEMENT SYSTEM
 For employees, you can change some of your data, view the current pending leaves, and plot your own leave(s).
 For admin(s), you can add other employees, delete employees' data, and modify employee data.
 For admins(s), you can also show the list of admins and lists of employees.
@@ -590,12 +592,13 @@ void runApp() {
     }
 
     if (userLevel == 'E') {
-      print('''You are an employee
+      print('''
+You are an employee
 You can edit some of your data, view current leaves, and/or plot your leave(s).
 But FIRST,\n''');
       isAdmin = false;
     } else if (userLevel == 'A') {
-      print('You are an admin');
+      print('\nYou are an admin');
       isAdmin = true;
     } else if (userLevel == 'Q') {
       quit();
@@ -627,11 +630,11 @@ But FIRST,\n''');
         if (employees.any((element) => element.name == name)) {
           //print('We have an employee named $name'); //FOR TESTING
           //print('employee $name @ index: ${findEmployeeIndexByName(name)}'); //FOR TESTING
-          int i = 2;
+          int i = 3;
           while (i != 0) {
             bool accountMatched = account.loginVerification(employee);
             if (!accountMatched) {
-              print('Tries remaining: $i');
+              print('Tries remaining: ${i - 1}');
               i -= 1;
             } else {
               while (endApp == false) {
@@ -701,7 +704,8 @@ void adminFunctionsPrompt() {
   String? adminAction;
   final adminOptions = ['Q', 'O', 'U', 'V', 'D', 'DE', 'DA', 'AAA', 'AE'];
 
-  print('''Welcome dear admin,
+  print('''
+Welcome dear admin,
 To quit, press "Q"
 To log-out, press "O"
 Do you want to UPDATE employee details? Press "U"
@@ -715,7 +719,8 @@ Do you want to add an employee account? Press "AE"
 
   adminAction = stdin.readLineSync()!.toUpperCase();
   while (!adminOptions.contains(adminAction)) {
-    print('''Invalid answer.
+    print('''
+Invalid answer.
 To quit, press "Q"
 To log-out, press "O"
 Do you want to UPDATE employee details? Press "U"
@@ -760,7 +765,8 @@ void employeeFunctionsPrompt() {
   String? employeeAction;
   final employeeOptions = ['L', 'U', 'V', 'O', 'Q', 'E', 'DL'];
 
-  print('''To quit, press "Q"
+  print('''\n
+To quit, press "Q"
 To log-out, press "O"
 Do you want to UPDATE your details? Press "U"
 Do you want to plot your LEAVE(S)? Press "L"
@@ -770,7 +776,8 @@ Do you want to delete your leave application? Press "DL"
 ''');
   employeeAction = stdin.readLineSync()!.toUpperCase();
   while (!employeeOptions.contains(employeeAction)) {
-    print('''Invalid answer.
+    print('''\n
+Invalid answer.
 To quit, press "Q"
 To log-out, press "O"
 Do you want to UPDATE your details? Press "U"
@@ -815,12 +822,17 @@ void reset() {
 }
 
 void logOut() {
-  reset();
-  print('Logging out..');
+  print('Logging out.. \n');
   Timer.periodic(const Duration(milliseconds: 400), (timer) {
-    print('Logged out');
-    timer.cancel();
+    int i = 1;
+    if (i == 1) {
+      i -= 1;
+      print('Logged out');
+    } else {
+      timer.cancel();
+    }
   });
+  reset();
   reloadApp ? runApp() : quit();
 }
 
@@ -831,7 +843,8 @@ void quit() {
 }
 
 bool continueWork() {
-  print('''Still continue your work? Press "C"
+  print('''
+Still continue your work? Press "C"
 To quit: Press "Q" :''');
   String stillContinue = stdin.readLineSync()!.toUpperCase();
 
