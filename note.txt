@@ -1,0 +1,4 @@
+please add:
+crypto: ^3.0.1
+
+to dependencies in pubspec.yaml file
