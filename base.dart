@@ -248,6 +248,8 @@ class Leaves {
     }
   }
 
+  void deleteLeave(Admin admin) {}
+
   //DONE
   void showLeavesOfEmployees() {
     if (leaves.isNotEmpty) {
@@ -491,7 +493,7 @@ class Admin extends Employee {
       var digest = hmacSha256.convert(utf8.encode(_pass));
       _pass = digest.toString();
 
-      if (_pass == adminAccounts['admin']) {
+      if (_pass == accounts['admin']) {
         //MAIN CODE
         Employee findEmployeeByName(String name) => employees.firstWhere((e) => e.name == name);
         int employeeIndex = findEmployeeByName(_name).id;
