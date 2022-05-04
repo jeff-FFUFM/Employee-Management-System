@@ -184,6 +184,7 @@ class Leaves {
   int leaveCount = 0;
   int? employeeId;
   List leaveDates = List.empty(growable: true);
+  String leaveStatus = 'Pending';
 
   //DONE!!!
   void applyLeave(Employee employee) {
@@ -248,18 +249,40 @@ class Leaves {
     }
   }
 
-  void deleteLeave(Admin admin) {}
-
   //DONE
   void showLeavesOfEmployees() {
     if (leaves.isNotEmpty) {
       for (int i = 0; i < leaves.length; i += 1) {
         print(
-            'Row${i + 1}: Name = ${leaves[i].employeeName}, Leave count: ${leaves[i].leaveCount}, Leave date: '
-            '${leaves[i].leaveDates}');
+            'Row${i + 1}: Name = ${leaves[i].employeeName}\nLeave count: ${leaves[i].leaveCount}\nLeave date: '
+            '${leaves[i].leaveDates}\nLeave status: ${leaves[i].leaveStatus}');
       }
     } else {
       print('No employee has applied (yet) for a leave.');
+    }
+  }
+
+  void processLeave(Employee employee) {
+    if (leaves.isNotEmpty) {
+      print('Employee name:');
+      String employeeName = stdin.readLineSync()!;
+
+      Leaves findEmployeeByName(String name) => leaves.firstWhere((e) => e.employeeName == name);
+      int leaveIndex = findEmployeeByName(employeeName).employeeId! - 1;
+
+      print('Accept(A) or Reject(R):');
+      leaveStatus = stdin.readLineSync()!.toUpperCase();
+
+      while (!['A', 'ACCEPT', 'R', 'REJECT'].contains(leaveStatus)) {
+        print('Invalid input\n Accept(A) or Reject(R)');
+        leaveStatus = stdin.readLineSync()!.toUpperCase();
+      }
+
+      if (leaveStatus == 'A' || leaveStatus == 'ACCEPT') {
+        leaves[leaveIndex].leaveStatus = 'Accepted';
+      } else if (leaveStatus == 'R' || leaveStatus == 'REJECT') {
+        leaves[leaveIndex].leaveStatus == 'Rejected';
+      }
     }
   }
 }
@@ -424,11 +447,11 @@ class Admin extends Employee {
       var employee = Employee();
       employee.id = employees.length + 1;
       employee.name = employee.askName();
-      employee.address = employee.askAddress();
-      employee.contactNumber = employee.askNumber();
-      employee.dateRegistered = employee.askRegistrationDate();
-      employee.salary = employee.askSalary();
-      employee.birthday = employee.askBirthday();
+      //employee.address = employee.askAddress();
+      //employee.contactNumber = employee.askNumber();
+      //employee.dateRegistered = employee.askRegistrationDate();
+      //employee.salary = employee.askSalary();
+      //employee.birthday = employee.askBirthday();
       employees.add(employee);
       print('${employee.name} is successfully added!');
     }
@@ -702,34 +725,38 @@ But FIRST,\n''');
 
 void adminFunctionsPrompt() {
   String? adminAction;
-  final adminOptions = ['Q', 'O', 'U', 'V', 'D', 'DE', 'DA', 'AAA', 'AE'];
+  final adminOptions = ['Q', 'O', 'U', 'V', 'D', 'DE', 'DA', 'AAA', 'AE', 'PL'];
 
   print('''
-Welcome dear admin,
-To quit, press "Q"
-To log-out, press "O"
-Do you want to UPDATE employee details? Press "U"
-Do you want to view employee leaves? Press "V"
-Do you want to delete an employee's DATA? Press "D"
-Do you want to display list of employees? Press "DE"
-Do you want to display list of admins? Press "DA"
-Do you want to add an admin account? Press "AAA"
-Do you want to add an employee account? Press "AE"
+Welcome dear admin ${admins.last.name},
+
+[U]   Update employee details
+[V]   View employee leaves
+[D]   Delete an employee's data
+[DE]  Display list of employees
+[DA]  Display list of admins
+[AAA] Add admin account
+[AE]  Add employee account
+[PL]  Process Leave
+[O]   Log out
+[Q]   Quit
 ''');
 
   adminAction = stdin.readLineSync()!.toUpperCase();
   while (!adminOptions.contains(adminAction)) {
     print('''
 Invalid answer.
-To quit, press "Q"
-To log-out, press "O"
-Do you want to UPDATE employee details? Press "U"
-Do you want to view employee leaves? Press "V"
-Do you want to delete an employee's DATA? Press "D"
-Do you want to display list of employees? Press "DE"
-Do you want to display list of admins? Press "DA"
-Do you want to add an admin account? Press "AAA"
-Do you want to add an employee account? Press "AE"
+
+[U]   Update employee details
+[V]   View employee leaves
+[D]   Delete an employee's data
+[DE]  Display list of employees
+[DA]  Display list of admins
+[AAA] Add admin account
+[AE]  Add employee account
+[PL]  Process Leave
+[O]   Log out
+[Q]   Quit
 ''');
     adminAction = stdin.readLineSync()!.toUpperCase();
   }
@@ -751,6 +778,8 @@ Do you want to add an employee account? Press "AE"
     } else if (adminAction == 'AE') {
       createAccount();
       print('You have successfully created employee ${employees.last.name}');
+    } else if (adminAction == 'PL') {
+      mainAdmin.processLeave(employee);
     } else if (adminAction == 'O') {
       logOut();
     } else if (adminAction == 'Q') {
@@ -766,25 +795,25 @@ void employeeFunctionsPrompt() {
   final employeeOptions = ['L', 'U', 'V', 'O', 'Q', 'E', 'DL'];
 
   print('''\n
-To quit, press "Q"
-To log-out, press "O"
-Do you want to UPDATE your details? Press "U"
-Do you want to plot your LEAVE(S)? Press "L"
-Do you want to view the current LEAVES? Press "V"
-Do you want to view your Employment data? Press "E"
-Do you want to delete your leave application? Press "DL"
+[U] Update employee details
+[L] Add Leave(s)
+[V] View current leaves (all)
+[E] View your employee data
+[DL] Delete your leave application
+[O] Log-out
+[Q] Quit\n
 ''');
   employeeAction = stdin.readLineSync()!.toUpperCase();
   while (!employeeOptions.contains(employeeAction)) {
     print('''\n
 Invalid answer.
-To quit, press "Q"
-To log-out, press "O"
-Do you want to UPDATE your details? Press "U"
-Do you want to plot your LEAVE(S)? Press "L"
-Do you want to view the current LEAVES? Press "V"
-Do you want to view your Employment data? Press "E"
-Do you want to delete your leave application? Press "DL" 
+[U] Update employee details
+[L] Add Leave(s)
+[V] View current leaves (all)
+[E] View your employee data
+[DL] Delete your leave application
+[O] Log-out
+[Q] Quit\n
 ''');
     employeeAction = stdin.readLineSync()!.toUpperCase();
   }
@@ -823,15 +852,6 @@ void reset() {
 
 void logOut() {
   print('Logging out.. \n');
-  Timer.periodic(const Duration(milliseconds: 400), (timer) {
-    int i = 1;
-    if (i == 1) {
-      i -= 1;
-      print('Logged out');
-    } else {
-      timer.cancel();
-    }
-  });
   reset();
   reloadApp ? runApp() : quit();
 }
@@ -844,8 +864,8 @@ void quit() {
 
 bool continueWork() {
   print('''
-Still continue your work? Press "C"
-To quit: Press "Q" :''');
+[C] Continue
+[Q] Quit :''');
   String stillContinue = stdin.readLineSync()!.toUpperCase();
 
   while (stillContinue != 'C' && stillContinue != 'Q') {
