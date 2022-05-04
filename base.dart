@@ -424,10 +424,10 @@ class Admin extends Employee {
       var employee = Employee();
       employee.id = employees.length + 1;
       employee.name = employee.askName();
-      //employee.address = employee.askAddress();
-      //employee.contactNumber = employee.askNumber();
-      //employee.dateRegistered = employee.askRegistrationDate();
-      //employee.salary = employee.askSalary();
+      employee.address = employee.askAddress();
+      employee.contactNumber = employee.askNumber();
+      employee.dateRegistered = employee.askRegistrationDate();
+      employee.salary = employee.askSalary();
       employee.birthday = employee.askBirthday();
       employees.add(employee);
       print('${employee.name} is successfully added!');
