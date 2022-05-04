@@ -465,7 +465,7 @@ class Admin extends Employee {
 
       //print(_pass); //For testing
 
-      if (_pass == accounts['admin']) {
+      if (_pass == accounts[_user]) {
         Employee findEmployeeByName(String name) => employees.firstWhere((e) => e.name == name);
         int employeeIndex = findEmployeeByName(_name).id;
         //print(employeeIndex); // For testing
@@ -493,7 +493,7 @@ class Admin extends Employee {
       var digest = hmacSha256.convert(utf8.encode(_pass));
       _pass = digest.toString();
 
-      if (_pass == accounts['admin']) {
+      if (_pass == accounts[_user]) {
         //MAIN CODE
         Employee findEmployeeByName(String name) => employees.firstWhere((e) => e.name == name);
         int employeeIndex = findEmployeeByName(_name).id;
