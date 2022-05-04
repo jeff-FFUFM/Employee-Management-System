@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:project1/constants.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
-import 'dart:async';
 
 bool isLoggedIn = false;
 bool isAdmin = false;
@@ -180,7 +179,7 @@ class Accounts extends Employee {
 }
 
 class Leaves {
-  String? employeeName;
+  String employeeName = '';
   int leaveCount = 0;
   int? employeeId;
   List leaveDates = List.empty(growable: true);
@@ -255,17 +254,17 @@ class Leaves {
       for (int i = 0; i < leaves.length; i += 1) {
         print(
             'Row${i + 1}: Name = ${leaves[i].employeeName}\nLeave count: ${leaves[i].leaveCount}\nLeave date: '
-            '${leaves[i].leaveDates}\nLeave status: ${leaves[i].leaveStatus}');
+            '${leaves[i].leaveDates}\nLeave status: ${leaves[i].leaveStatus}\n');
       }
     } else {
-      print('No employee has applied (yet) for a leave.');
+      print('No employee has applied (yet) for a leave.\n');
     }
   }
 
   void processLeave(Employee employee) {
     if (leaves.isNotEmpty) {
       print('Employee name:');
-      String employeeName = stdin.readLineSync()!;
+      employeeName = stdin.readLineSync()!;
 
       Leaves findEmployeeByName(String name) => leaves.firstWhere((e) => e.employeeName == name);
       int leaveIndex = findEmployeeByName(employeeName).employeeId! - 1;
@@ -274,14 +273,16 @@ class Leaves {
       leaveStatus = stdin.readLineSync()!.toUpperCase();
 
       while (!['A', 'ACCEPT', 'R', 'REJECT'].contains(leaveStatus)) {
-        print('Invalid input\n Accept(A) or Reject(R)');
+        print('Invalid input\n Accept(A) or Reject(R)\n');
         leaveStatus = stdin.readLineSync()!.toUpperCase();
       }
 
       if (leaveStatus == 'A' || leaveStatus == 'ACCEPT') {
         leaves[leaveIndex].leaveStatus = 'Accepted';
+        leaves.last.leaveStatus = 'Accepted';
       } else if (leaveStatus == 'R' || leaveStatus == 'REJECT') {
         leaves[leaveIndex].leaveStatus == 'Rejected';
+        leaves.last.leaveStatus = 'Rejected';
       }
     }
   }
@@ -434,8 +435,8 @@ class Employee extends Leaves {
   void viewMyDetails(Employee employee) {
     Employee findEmployeeByName(String name) => employees.firstWhere((e) => e.name == name);
     int employeeIndex = findEmployeeByName(employee.name).id - 1;
-    print('number of employees = ${employees.length}'); // for TESTING
-    print(employeeIndex); //for TESTING
+    //print('number of employees = ${employees.length}'); // for TESTING
+    //print('$employeeIndex'); //for TESTING
     print(employees[employeeIndex].displayInformation());
   }
 }
@@ -447,11 +448,11 @@ class Admin extends Employee {
       var employee = Employee();
       employee.id = employees.length + 1;
       employee.name = employee.askName();
-      //employee.address = employee.askAddress();
-      //employee.contactNumber = employee.askNumber();
-      //employee.dateRegistered = employee.askRegistrationDate();
-      //employee.salary = employee.askSalary();
-      //employee.birthday = employee.askBirthday();
+      employee.address = employee.askAddress();
+      employee.contactNumber = employee.askNumber();
+      employee.dateRegistered = employee.askRegistrationDate();
+      employee.salary = employee.askSalary();
+      employee.birthday = employee.askBirthday();
       employees.add(employee);
       print('${employee.name} is successfully added!');
     }
