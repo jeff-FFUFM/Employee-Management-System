@@ -424,10 +424,10 @@ class Admin extends Employee {
       var employee = Employee();
       employee.id = employees.length + 1;
       employee.name = employee.askName();
-      employee.address = employee.askAddress();
-      employee.contactNumber = employee.askNumber();
-      employee.dateRegistered = employee.askRegistrationDate();
-      employee.salary = employee.askSalary();
+      //employee.address = employee.askAddress();
+      //employee.contactNumber = employee.askNumber();
+      //employee.dateRegistered = employee.askRegistrationDate();
+      //employee.salary = employee.askSalary();
       employee.birthday = employee.askBirthday();
       employees.add(employee);
       print('${employee.name} is successfully added!');
@@ -465,9 +465,9 @@ class Admin extends Employee {
 
       //print(_pass); //For testing
 
-      if (_pass == accounts[_user]) {
+      if (_pass == adminAccounts[_user]) {
         Employee findEmployeeByName(String name) => employees.firstWhere((e) => e.name == name);
-        int employeeIndex = findEmployeeByName(_name).id;
+        int employeeIndex = findEmployeeByName(_name).id - 1;
         //print(employeeIndex); // For testing
         employees.removeAt(employeeIndex);
         print('Employee $_name is successfully removed.');
@@ -493,10 +493,10 @@ class Admin extends Employee {
       var digest = hmacSha256.convert(utf8.encode(_pass));
       _pass = digest.toString();
 
-      if (_pass == accounts[_user]) {
+      if (_pass == adminAccounts[_user]) {
         //MAIN CODE
         Employee findEmployeeByName(String name) => employees.firstWhere((e) => e.name == name);
-        int employeeIndex = findEmployeeByName(_name).id;
+        int employeeIndex = findEmployeeByName(_name).id - 1;
 
         //Admin can change address, contact number, salary, birthday of employee
         print('Change address(A), contact number(N), salary(S), birthday(B)?');
